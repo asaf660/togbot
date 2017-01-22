@@ -29,16 +29,32 @@ def get_users(message):
 def user_report(message):
     response = ''
     for key, value in users_dict().iteritems():
-        print '{}; {}'.format(key, value)
         reportObject = toggl.getWeeklyReport({'workspace_id':'460285', 'user_ids':value})
+        name = '<@{}>'.format(key.split()[0] if len(key.split()) > 1 else key)
+        weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu']    # True only if executed on Thursday
+
         if not reportObject['data']:
-            response += '*{}* is missing time entries this week\n'.format(key)
+            message.send('{}: you need to fill your entire week'.format(name))
         else:
-            response += '*{}* has {} hours over the past week \n'.format(key, [str(hours/3600000) for hours in reportObject['week_totals'] if hours is not None][-1])
-            #', '.join([str(hours/3600000) for hours in reportObject['week_totals'] if hours is not None])
+            days = [day for day in reportObject['week_totals'][-6:-1]]
+            for i, day in enumerate(days):
+                days[i] = 0 if day is None else day/3600000
+                    
+            if 0 in days:
+                weekly = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days)])
+                message.send('{}, Your week report: {}, Please complete it'.format(name, weekly))
+                
+
+            # response += '*{}* has {} hours over the past week \n'.format(key, [str(hours/3600000) for hours in reportObject['week_totals'] if hours is not None][-1])
+
         time.sleep(1)
 
-    message.reply(response)
+    # message.reply(response)
+
+
+@respond_to('^my time')
+def print_users(message):
+    pass
 
     
 
