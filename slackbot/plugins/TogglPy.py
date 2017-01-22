@@ -224,6 +224,9 @@ class Toggl():
                 if workspace['id'] == int(id):
                     return workspace # if we find it return it
             return None # if we get to here and haven't found it return None
+
+    def getWorkspaceUsers(self, wid):
+        return self.request('{}/{}/users'.format(Endpoints.WORKSPACES, wid))
     
     #--------------------------------
     # Methods for getting client data
