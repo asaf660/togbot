@@ -9,20 +9,7 @@ from slackbot.bot import Bot
 import yaml
 
 
-def fetch_conf():
-    with open('conf.yml') as conf:
-        dataMap = yaml.safe_load(conf)
-    return dataMap
-
-
-def set_env(dataMap):
-    for key, value in dataMap.iteritems():
-        print 'Setting {} = {}'.format(key, value)
-        os.environ[key] = dataMap.get(key)
-
-
 def main():
-    set_env(fetch_conf())
     kw = {
         'format': '[%(asctime)s] %(message)s',
         'datefmt': '%m/%d/%Y %H:%M:%S',
