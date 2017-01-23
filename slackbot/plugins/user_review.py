@@ -34,7 +34,7 @@ def user_report(message):
         weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu']    # True only if executed on Thursday
 
         if not reportObject['data']:
-            message.send('{}: you need to fill your entire week'.format(name))
+            message.send('{}: your week is empty'.format(name))
         else:
             days = [day for day in reportObject['week_totals'][-6:-1]]
             for i, day in enumerate(days):
@@ -42,14 +42,11 @@ def user_report(message):
                     
             if 0 in days:
                 weekly = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days)])
-                message.send('{}, Your week report: {}, Please complete it'.format(name, weekly))
-                
+                message.send('{}, Your week report is not complete: {}, do it'.format(name, weekly))
 
             # response += '*{}* has {} hours over the past week \n'.format(key, [str(hours/3600000) for hours in reportObject['week_totals'] if hours is not None][-1])
 
         time.sleep(1)
-
-    # message.reply(response)
 
 
 @respond_to('^my time')
