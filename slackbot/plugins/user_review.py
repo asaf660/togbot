@@ -35,7 +35,7 @@ def users_dict():
 
 
 @respond_to('help')
-def get_users(message):
+def help(message):
     options = [
         'Instructions:',
         'In a channel call me like any other user by tagging: *@togbot <message>*',
