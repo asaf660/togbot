@@ -196,6 +196,9 @@ class Message(object):
 
     def get_user(self):
         return u'<@{}>'.format(self._get_user_id())
+
+    def get_user_name(self):
+        return u'{}'.format(self._client.find_user_real_name(self._get_user_id()))
         
     @unicode_compact
     def gen_reply(self, text):

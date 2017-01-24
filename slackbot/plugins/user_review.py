@@ -66,6 +66,10 @@ def activation(message):
     job = sched.add_cron_job(users_report, day_of_week=3, hour=17, minute=0)
     message.send('Activated, I will report every Thursday')
 
+
+@respond_to('my report')
+def activation(message):
+    print message.get_user_name()
     
 if __name__ == '__main__':
     

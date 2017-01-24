@@ -152,6 +152,11 @@ class SlackClient(object):
             if user['name'] == username:
                 return userid
 
+    def find_user_real_name(self, uid):
+        for userid, user in iteritems(self.users):
+            if uid == user['id']:
+                return user['first_name']
+
     def react_to_message(self, emojiname, channel, timestamp):
         self.webapi.reactions.add(
             name=emojiname,
