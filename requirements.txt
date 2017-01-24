@@ -1,0 +1,4 @@
+APScheduler==2.1.2
+requests==2.12.5
+slackbot==0.4.1
+PyYAML==3.12
