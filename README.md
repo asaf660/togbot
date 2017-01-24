@@ -8,6 +8,7 @@ A slack bot integrated with Toggl API, for reminders and verification of Toggle 
     docker build -t togbot .
     ```
 
-3.  ```bash
-    docker run togbot
-    ```
+3.  
+```bash
+docker run togbot
+```
