@@ -100,6 +100,14 @@ def self_report(message):
     weekline = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']])
     message.reply('{}\n{}'.format('You week entires (today is the last entry to the right):', weekline))
 
+
+# TODO: WIP ------>
+# @respond_to('$set (.*) hours .* working on (.*)')
+# def set_entry(message, hours, project):
+#     if 'today' in message.body:
+#         toggl.createTimeEntry()
+
+
     
 if __name__ == '__main__':
     
