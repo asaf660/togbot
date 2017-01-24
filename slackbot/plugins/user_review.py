@@ -24,7 +24,8 @@ def shift(arr, num):
     return list(items)
 
 
-def fix_days(days):
+def get_fixed_days():
+    days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     today = datetime.today().weekday()
     return shift(days, -1) if today == 6 else shift(days, 5-today)
         
@@ -33,23 +34,37 @@ def users_dict():
     return {emp['fullname']: emp['id'] for emp in toggl.getWorkspaceUsers('460285')}
 
 
+@respond_to('help')
+def get_users(message):
+    options = [
+        'Instructions:',
+        'In a channel call me like any other user by tagging: *@togbot <message>*',
+        'In private you can just send your request, for now I do these:',
+        '1. *get users report* will notify users with empty / part empty reports',
+        '2. *my report* will get your own last 7 days report (excluding weekend)',
+        '3. *activate* is used to make me report on Thursday at 17:00 (do it only once)',
+        '\n',
+        'In the future I will be able to help you complete your report!'
+    ]
+    message.reply('\n'.join(options))
+
+
 @respond_to('^users$')
 def get_users(message):
     message.reply('\n'.join(['{}: {}'.format(emp['id'], emp['fullname']) for emp in toggl.getWorkspaceUsers('460285')]))
 
 
-@respond_to('send users report')
+@respond_to('get users report')
 def users_report(message):
     for key, value in users_dict().iteritems():
         reportObject = toggl.getWeeklyReport({'workspace_id':'460285', 'user_ids':value})
         name = '<@{}>'.format(key.split()[0] if len(key.split()) > 1 else key)
-        weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']    # True only if executed on Thursday
 
         if not reportObject['data']:
             message.send('{}: your week is empty'.format(name))
         else:
+            weekDays = get_fixed_days()
             days = [day for day in reportObject['week_totals'][:7]]
-            weekDays = fix_days(weekDays)
             for i, day in enumerate(days):
                 days[i] = 0 if day is None else day/3600000
 
@@ -63,13 +78,28 @@ def users_report(message):
 
 @respond_to('^activate$')
 def activation(message):
+    # TODO: Make sure activation works only once
     job = sched.add_cron_job(users_report, day_of_week=3, hour=17, minute=0)
     message.send('Activated, I will report every Thursday')
 
 
 @respond_to('my report')
-def activation(message):
-    print message.get_user_name()
+def self_report(message):
+    name = message.get_user_name().lower()
+    for key, value in users_dict().iteritems():
+        if key.split()[0].lower() == name:
+            reportObject = toggl.getWeeklyReport({'workspace_id':'460285', 'user_ids':value})
+            break      
+    
+    weekDays = get_fixed_days()
+    days = [day for day in reportObject['week_totals'][:7]]
+    for i, day in enumerate(days):
+        days[i] = 0 if day is None else day/3600000
+
+    
+    weekline = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']])
+    message.reply('{}\n{}'.format('You week entires (today is the last entry to the right):', weekline))
+
     
 if __name__ == '__main__':
     
