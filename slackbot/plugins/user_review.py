@@ -6,6 +6,7 @@ from apscheduler.scheduler import Scheduler  # pip install apscheduler==2.1.2
 from datetime import datetime
 from collections import deque
 
+REMINDER_ACTIVATED = False
 
 def fetch_conf():
     with open('conf.yml') as conf:
@@ -78,10 +79,14 @@ def users_report(message):
 
 @respond_to('^activate$')
 def activation(message):
-    # TODO: Make sure activation works only once
-    job = sched.add_cron_job(users_report, day_of_week=3, hour=17, minute=0)
-    message.send('Activated, I will report every Thursday')
-
+    global REMINDER_ACTIVATED
+    if not REMINDER_ACTIVATED:
+        job = sched.add_cron_job(users_report, day_of_week=3, hour=17, minute=0)
+        REMINDER_ACTIVATED = True
+        message.send('Activated, I will report every Thursday')
+    else:
+        message.send('Already activated.')
+    
 
 @respond_to('my report')
 def self_report(message):
