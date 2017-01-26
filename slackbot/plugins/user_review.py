@@ -54,7 +54,8 @@ def help(message):
         '2. *my report* will get your own last 7 days report (excluding weekend)',
         '3. *activate* is used to make me report on Thursday at 17:00 (do it only once)',
         '\n',
-        'In the future I will be able to help you complete your report!'
+        'People I can currently help with differnt Toggl tasks are:',
+        ', '.join([name for name in fetch_conf()['USERS_TOKENS'].keys()])
     ]
     message.reply('\n'.join(options))
 
@@ -87,13 +88,14 @@ def users_report(message):
             summary = {weekDays[i]: day for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']}
             if 0 in summary.values():
                 weekly = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']])
-                message.send('{}, Your week is not complete: {}'.format(name, weekly))
+                message.send('{}! Not good enough: {}'.format(name, weekly))
 
         
         time.sleep(1)  # Toggl API limitations
 
     if len(empty_week_users) > 0:
-            message.send('{}, your week is empty, why?'.format(' ,'.join(empty_week_users)))                
+            message.send('{}, your week is empty, why?\n\n\n{}'.format(' ,'.join(empty_week_users), 'FINISH IT! https://toggl.com/app/timer'))                
+
 
 
 @respond_to('^activate$')
@@ -140,7 +142,6 @@ def message(message):
 #         toggl.createTimeEntry()
 
 
-    
 if __name__ == '__main__':
     
     main()
