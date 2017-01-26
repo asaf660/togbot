@@ -57,12 +57,14 @@ def get_users(message):
 
 @respond_to('get users report')
 def users_report(message):
+    empty_week_users = []
     for key, value in users_dict().iteritems():
         reportObject = toggl.getWeeklyReport({'workspace_id':'460285', 'user_ids':value})
         name = '<@{}>'.format(key.split()[0] if len(key.split()) > 1 else key)
 
         if not reportObject['data']:
-            message.send('{}: your week is empty'.format(name))
+            # message.send('{}: your week is empty'.format(name))
+            empty_week_users.append(name)
         else:
             weekDays = get_fixed_days()
             days = [day for day in reportObject['week_totals'][:7]]
@@ -74,7 +76,11 @@ def users_report(message):
                 weekly = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']])
                 message.send('{}, Your week report is not complete: {}'.format(name, weekly))
 
+        
         time.sleep(1)  # Toggl API limitations
+
+    if len(empty_week_users) > 0:
+            message.send('{}, your week is empty, why?'.format(' ,'.join(empty_week_users)))                
 
 
 @respond_to('^activate$')
