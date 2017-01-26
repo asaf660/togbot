@@ -105,7 +105,14 @@ def self_report(message):
     weekDays = get_fixed_days()
     days = [day for day in reportObject['week_totals'][:7]]
     for i, day in enumerate(days):
-        days[i] = 0 if day is None else day/3600000
+        if day is None:
+            days[i] = 0
+        else:
+            hours = day/3600000
+            minutes = int(((float(day)/3600000) % 1) * 60)
+            days[i] = '{}:{}'.format(hours, minutes) if minutes else hours
+                
+
 
     
     weekline = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']])
@@ -113,7 +120,7 @@ def self_report(message):
 
 @respond_to('message')
 def message(message):
-    print message.body
+    print 'running: {}'.format(toggl.currentRunningTimeEntry())
 
 
 
