@@ -8,15 +8,24 @@ from collections import deque
 
 REMINDER_ACTIVATED = {}
 
+
 def fetch_conf():
     with open('conf.yml') as conf:
         dataMap = yaml.safe_load(conf)
     return dataMap
 
+
 toggl = Toggl()
 toggl.setAPIKey(fetch_conf().get('TOGGL_API_TOKEN')) 
 sched = Scheduler()
 sched.start()
+
+
+def humanize_time(day):
+    hours = day/3600000
+    minutes = int(((float(day)/3600000) % 1) * 60)
+
+    return hours, minutes
 
 
 def shift(arr, num):
@@ -69,12 +78,16 @@ def users_report(message):
             weekDays = get_fixed_days()
             days = [day for day in reportObject['week_totals'][:7]]
             for i, day in enumerate(days):
-                days[i] = 0 if day is None else day/3600000
+                if day is None:
+                    days[i] = 0
+                else:
+                    hours, minutes = humanize_time(day)
+                    days[i] = '{}:{}'.format(hours, minutes) if minutes else hours
 
             summary = {weekDays[i]: day for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']}
             if 0 in summary.values():
                 weekly = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']])
-                message.send('{}, Your week report is not complete: {}'.format(name, weekly))
+                message.send('{}, Your week is not complete: {}'.format(name, weekly))
 
         
         time.sleep(1)  # Toggl API limitations
@@ -108,13 +121,9 @@ def self_report(message):
         if day is None:
             days[i] = 0
         else:
-            hours = day/3600000
-            minutes = int(((float(day)/3600000) % 1) * 60)
+            hours, minutes = humanize_time(day)
             days[i] = '{}:{}'.format(hours, minutes) if minutes else hours
                 
-
-
-    
     weekline = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']])
     message.reply('{}\n{}'.format('You week entires (today is the last entry to the right):', weekline))
 
