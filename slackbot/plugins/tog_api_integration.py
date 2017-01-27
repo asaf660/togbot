@@ -8,8 +8,45 @@
 # randomizeTimeEntry
 
 from slackbot.bot import respond_to
+from TogglPy import Toggl
+from utils import fetch_conf
 
-# @respond_to('$set (.*) hours .* working on (.*)')
-@respond_to('omer')
+
+def toggl_user_object(username):
+    conf = fetch_conf().get('USERS_TOKENS')
+    if not conf or not conf[username]: 
+        return
+    
+    toggl_user_object = Toggl()
+    toggl_user_object.setAPIKey(conf[username]) 
+    return toggl_user_object
+
+
+@respond_to('current time')
+def currentRunningTime(message):
+    currentTime = toggl_user_object(message.get_user_name().lower()).currentRunningTimeEntry()
+    if not currentTime['data']:
+        message.reply('No current running time')
+    else:
+        sinceTime = currentTime['data']['start'].split('T')[1].split('+')[0]
+        hours = sinceTime.split(':')[0]
+        minutes = sinceTime.split(':')[1]
+        if int(hours) < 22: 
+            hours = sinceTime.split(':')[0] 
+        elif int(hours) == 22:
+            hours = 0
+        elif int(hours) == 23:
+            hours = 1
+        else:
+            hours = 2
+
+        message.reply('Current time running since {}:{}'.format(hours, minutes))
+
+    
+
+    print 'RESPONSE: {}'.format(toggl_user_object('omer'))
+
+
+@respond_to('set (.*) hours working on (.*)')
 def entry(message, hours, project):
     print 'Hours: {}, Project: {}'.format(hours, project)
