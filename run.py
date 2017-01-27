@@ -7,7 +7,14 @@ import logging.config
 from slackbot import settings
 from slackbot.bot import Bot
 import yaml
+import flask
+app = flask.Flask(__name__)
 
+@app.route("/")
+def index():
+    #do whatevr here...
+    return "Hello Heruko"
+    
 def main():
     kw = {
         'format': '[%(asctime)s] %(message)s',
