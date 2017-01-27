@@ -9,6 +9,7 @@
 
 from slackbot.bot import respond_to
 
-@respond_to('$set (.*) hours .* working on (.*)')
+# @respond_to('$set (.*) hours .* working on (.*)')
+@respond_to('omer')
 def entry(message, hours, project):
     print 'Hours: {}, Project: {}'.format(hours, project)
