@@ -6,20 +6,9 @@ from apscheduler.scheduler import Scheduler  # pip install apscheduler==2.1.2
 from datetime import datetime
 from collections import deque
 import os
+from utils import fetch_conf
 
 REMINDER_ACTIVATED = {}
-
-
-def fetch_conf():
-    dataMap = {}
-    try:
-        with open('conf.yml') as conf:
-            dataMap = yaml.safe_load(conf)
-    except:
-        dataMap['TOGGL_API_TOKEN'] = os.environ['TOGGL_API_TOKEN']
-        dataMap['SLACK_API_TOKEN'] = os.environ['SLACK_API_TOKEN']
-
-    return dataMap
 
 
 toggl = Toggl()
