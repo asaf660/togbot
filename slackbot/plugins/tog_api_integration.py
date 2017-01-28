@@ -10,6 +10,7 @@
 from slackbot.bot import respond_to
 from TogglPy import Toggl
 from utils import fetch_conf
+import pickle
 
 
 def toggl_user_object(message):

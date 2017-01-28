@@ -14,8 +14,6 @@ REMINDER_ACTIVATED = {}
 
 toggl = Toggl()
 toggl.setAPIKey(fetch_conf().get('TOGGL_API_TOKEN')) 
-PROJECTS_MAP = toggl.createProjectsMap()
-print PROJECTS_MAP
 sched = Scheduler()
 sched.start()
 
@@ -41,6 +39,11 @@ def get_fixed_days():
     
 def users_dict():
     return {emp['fullname']: emp['id'] for emp in toggl.getWorkspaceUsers('460285')}
+
+
+@respond_to('^create projects map$')
+def create_projects_map(message):
+    toggl.createProjectsMap()
 
 
 @respond_to('help')

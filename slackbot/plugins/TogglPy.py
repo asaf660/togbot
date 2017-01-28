@@ -334,7 +334,7 @@ class Toggl():
                 for project in clientProjects:
                     projectsMap[project['name']] = project['id']
         
-        pickle.dump projectsMap
+        pickle.dump(projectsMap, open('projectsMap.json', 'wb'))
              
 
     #---------------------------------
