@@ -4,6 +4,7 @@
 #--------------------------------------------------------------
 from datetime import datetime
 import random
+import pickle
 # for making requests
 import urllib2
 import urllib
@@ -105,11 +106,12 @@ class Toggl():
 
     def startTimeEntry(self, description, pid):
         '''starts a new Time Entry'''
+        print 'Desc: {}, PID: {}'.format(description, pid)
         data = {
             "time_entry": {
-            "description": description,
-            "pid": pid,
-            "created_with": self.user_agent
+                "description": description,
+                "pid": pid,
+                "created_with": self.user_agent
             }
         }
         response = self.postRequest(Endpoints.START_TIME, parameters=data)
@@ -291,6 +293,9 @@ class Toggl():
         for client in self.getClients():
             if client['name'] == clientName:
                 cid = client['id']
+                break
+        else:
+            cid = None
 
         if not cid:
             print 'Could not find such client name'
@@ -312,6 +317,25 @@ class Toggl():
     def getProject(self, pid):
         '''return all projects that are visable to a user'''
         return self.request(Endpoints.PROJECTS + '/{0}'.format(pid))
+
+    def getProjectIdByName(self, name):
+        for client in self.getClients():
+            pid = self.getClientProject(name, name) # works only for clients and project with the same name
+            return pid if pid else None
+            
+        return
+
+    def createProjectsMap(self):
+    # Fetch all clients and projects and create a map for API use
+        projectsMap = {}
+        for client in self.getClients():
+            clientProjects = self.getClientProjects(client['id'])
+            if clientProjects:
+                for project in clientProjects:
+                    projectsMap[project['name']] = project['id']
+        
+        pickle.dump projectsMap
+             
 
     #---------------------------------
     # Methods for getting reports data

@@ -7,12 +7,15 @@ from datetime import datetime
 from collections import deque
 import os
 from utils import fetch_conf
+import pickle
 
 REMINDER_ACTIVATED = {}
 
 
 toggl = Toggl()
 toggl.setAPIKey(fetch_conf().get('TOGGL_API_TOKEN')) 
+PROJECTS_MAP = toggl.createProjectsMap()
+print PROJECTS_MAP
 sched = Scheduler()
 sched.start()
 

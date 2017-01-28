@@ -12,8 +12,9 @@ from TogglPy import Toggl
 from utils import fetch_conf
 
 
-def toggl_user_object(username):
+def toggl_user_object(message):
     conf = fetch_conf().get('USERS_TOKENS')
+    username = message.get_user_name().lower()
     if not conf or not conf[username]: 
         return
     
@@ -24,7 +25,7 @@ def toggl_user_object(username):
 
 @respond_to('current time')
 def currentRunningTime(message):
-    currentTime = toggl_user_object(message.get_user_name().lower()).currentRunningTimeEntry()
+    currentTime = toggl_user_object(message).currentRunningTimeEntry()
     if not currentTime['data']:
         message.reply('No current running time')
     else:
@@ -42,9 +43,20 @@ def currentRunningTime(message):
 
         message.reply('Current time running since {}:{}'.format(hours, minutes))
 
-    
 
-    print 'RESPONSE: {}'.format(toggl_user_object('omer'))
+@respond_to('start time (.*)')
+def startTime(message, project=None):
+    # Find pid by given project name
+    print 'start time'
+    pid = toggl_user_object(message).getProjectIdByName(project)
+    print pid
+    if not pid:
+        message.reply('No such project "{}"'.format(project))
+    else:
+        # print type(pid)
+        toggl_user_object(message).startTimeEntry('', pid)
+        message.reply('Started, time is running')
+    
 
 
 @respond_to('set (.*) hours working on (.*)')
