@@ -9,8 +9,7 @@
 
 from slackbot.bot import respond_to
 from TogglPy import Toggl
-from utils import fetch_conf
-import pickle
+from utils import fetch_conf, get_projectId_by_name
 
 
 def toggl_user_object(message):
@@ -24,7 +23,7 @@ def toggl_user_object(message):
     return toggl_user_object
 
 
-@respond_to('current time')
+@respond_to('^current time')
 def currentRunningTime(message):
     currentTime = toggl_user_object(message).currentRunningTimeEntry()
     if not currentTime['data']:
@@ -45,21 +44,23 @@ def currentRunningTime(message):
         message.reply('Current time running since {}:{}'.format(hours, minutes))
 
 
-@respond_to('start time (.*)')
+@respond_to('^start time (.*)')
 def startTime(message, project=None):
-    # Find pid by given project name
-    print 'start time'
-    pid = toggl_user_object(message).getProjectIdByName(project)
-    print pid
-    if not pid:
-        message.reply('No such project "{}"'.format(project))
+    currentTime = toggl_user_object(message).currentRunningTimeEntry()
+    if not currentTime['data']:
+        # Find pid by given project name
+        pid = get_projectId_by_name(project)
+        if not pid:
+            message.reply('No such project "{}"'.format(project))
+        else:
+            toggl_user_object(message).startTimeEntry('', pid)
+            message.reply('Started, time is running')
     else:
-        # print type(pid)
-        toggl_user_object(message).startTimeEntry('', pid)
-        message.reply('Started, time is running')
-    
+        message.reply('Time is already running')
 
 
 @respond_to('set (.*) hours working on (.*)')
 def entry(message, hours, project):
     print 'Hours: {}, Project: {}'.format(hours, project)
+
+

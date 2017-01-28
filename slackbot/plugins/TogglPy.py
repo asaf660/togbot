@@ -318,13 +318,6 @@ class Toggl():
         '''return all projects that are visable to a user'''
         return self.request(Endpoints.PROJECTS + '/{0}'.format(pid))
 
-    def getProjectIdByName(self, name):
-        for client in self.getClients():
-            pid = self.getClientProject(name, name) # works only for clients and project with the same name
-            return pid if pid else None
-            
-        return
-
     def createProjectsMap(self):
     # Fetch all clients and projects and create a map for API use
         projectsMap = {}
