@@ -41,6 +41,12 @@ def get_projectName_by_id(projectId):
     return
 
 
+def get_projects_list():
+    projects = pickle.load(open( 'projectsMap.json', 'rb'))
+    
+    return [proj for key in projects]
+
+
 
 if __name__ == '__main__':
     

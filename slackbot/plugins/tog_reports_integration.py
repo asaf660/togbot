@@ -6,7 +6,7 @@ from apscheduler.scheduler import Scheduler  # pip install apscheduler==2.1.2
 from datetime import datetime
 from collections import deque
 import os
-from utils import fetch_conf
+from utils import fetch_conf, get_projects_list
 import pickle
 
 REMINDER_ACTIVATED = {}
@@ -137,9 +137,9 @@ def self_report(message):
     weekline = ', '.join(['*{}* {}'.format(weekDays[i], day) for i, day in enumerate(days) if weekDays[i] not in ['Fri', 'Sat']])
     message.reply('{}\n{}'.format('You week entires (today is the last entry to the right):', weekline))
 
-@respond_to('message')
+@respond_to('^get projects$')
 def message(message):
-    print 'running: {}'.format(toggl.currentRunningTimeEntry())
+    message.reply(', '.join(get_projects_list()))
 
 
 
