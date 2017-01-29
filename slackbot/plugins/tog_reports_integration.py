@@ -59,8 +59,8 @@ def help(message):
         # '5. *current time* returns the start time',
         # '6. *stop time* stops current running time'
         '\n',
-        'People I can currently help with differnt Toggl tasks are:',
-        ', '.join([name for name in fetch_conf()['USERS_TOKENS'].keys()])
+        # 'People I can currently help with differnt Toggl tasks are:',
+        # ', '.join([name for name in fetch_conf()['USERS_TOKENS'].keys()])
     ]
     message.reply('\n'.join(options))
 
