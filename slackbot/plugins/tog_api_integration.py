@@ -69,13 +69,20 @@ def startTime(message,):
 
 
 @respond_to('set (.*) hours working on (.*)')
-def entry(message, hours, project):
+@respond_to('set (.*) hours working on (.*) on (.*)')
+@respond_to('set (.*) hours working on (.*) on (.*) from (.*)')
+def entry(message, hours, project, date=None, startHour=None):
     pid = get_projectId_by_name(project)
     if not pid:
         message.reply('No such project *{}*'.format(project))
         return
+
+    day = int(date.split('.')[0]) if date else None
+    month = int(date.split('.')[1]) if date else None
+    year = int(date.split('.')[2]) if date else None
+
     try:
-        toggl_user_object(message).createTimeEntry(hourduration=int(hours), projectid=pid)
+        toggl_user_object(message).createTimeEntry(hourduration=int(hours), projectid=pid, year=year, month=month, day=day, hour=startHour)
     except Exception as e:
         print e
         message.reply('Bad parameters (hours: {}, project: {}, pid {})'.format(hours, project, pid))
