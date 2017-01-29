@@ -49,21 +49,21 @@ def create_projects_map(message):
 @respond_to('help')
 def help(message):
     options = [
-        'Instructions:',
-        'In a channel call me like any other user by tagging: *@togbot <message>*',
+        '*Instructions:*',
+        'In a channel call me like any other user by tagging: `@togbot <message>`',
         'In private you can just send your request, for now I do these:',
-        '1. *get users report* will notify users with empty / part empty reports',
-        '2. *my report* will get your own last 7 days report (excluding weekend)',
-        '3. *activate* is used to make me report on Thursday at 17:00 (do it only once)',
-        '4. *start time <project>* can start the timer (if the given name matches a Toggl project)',
-        '5. *current time* returns the start time',
-        '6. *stop time* stops current running time',
-        '7. *set 3 hours working on mdx* sets an entry for today starting at 9:00',
-        '8. *set 8 hours working on 90min on 29.1.2017* like (7) with explicit date',
-        '9. *set 5 hours working on tapingo on 15.1.2017 from 16* like (8) with starting hour',
+        '1. `get users report` will notify users with empty / part empty reports',
+        '2. `my report` will get your own last 7 days report (excluding weekend)',
+        '3. `activate` is used to make me report on Thursday at 17:00 (do it only once)',
+        '4. `start time <project>` can start the timer (if the given name matches a Toggl project)',
+        '5. `current time` returns the start time',
+        '6. `stop time` stops current running time',
+        '7. `set 3 hours working on mdx` sets an entry for today starting at 9:00',
+        '8. `set 8 hours working on 90min on 29.1.2017` like (7) with explicit date',
+        '9. `set 5 hours working on tapingo on 15.1.2017 from 16` like (8) with starting hour',
         '\n',
         'People I can currently help with differnt Toggl tasks (5-9) are:',
-        ', '.join([name for name in fetch_conf()['USERS_TOKENS'].keys()])
+        ', '.join(['*{}*'.format(name) for name in fetch_conf()['USERS_TOKENS'].keys()])
     ]
     message.reply('\n'.join(options))
 
@@ -102,7 +102,7 @@ def users_report(message):
         time.sleep(1)  # Toggl API limitations
 
     if len(empty_week_users) > 0:
-            message.send('{}, your week is empty, why?\n\n\n{}'.format(' ,'.join(empty_week_users), 'FINISH IT! https://toggl.com/app/timer'))                
+            message.send('{}, your week is empty, why?\n\n\n{}'.format(', '.join(empty_week_users), 'FINISH IT! https://toggl.com/app/timer'))                
 
 
 
