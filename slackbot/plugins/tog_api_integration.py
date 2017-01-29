@@ -70,6 +70,15 @@ def startTime(message,):
 
 @respond_to('set (.*) hours working on (.*)')
 def entry(message, hours, project):
-    print 'Hours: {}, Project: {}'.format(hours, project)
+    pid = get_projectId_by_name(project)
+    if not pid:
+        message.reply('No such project *{}*'.format(project))
+        return
+    try:
+        toggl_user_object(message).createTimeEntry(hourduration=int(hours), projectid=pid)
+    except Exception as e:
+        print e
+        message.reply('Bad parameters (hours: {}, project: {}, pid {})'.format(hours, project, pid))
+    
 
 

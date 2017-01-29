@@ -127,14 +127,12 @@ class Toggl():
         response = self.postRequest(Endpoints.STOP_TIME(entryid))
         return self.decodeJSON(response)
 
-    def createTimeEntry(self, hourduration, projectid=None, projectname=None,
-                        clientname=None, year=None, month=None, day=None, hour=None):
+    def createTimeEntry(self, hourduration, projectid, year=None, month=None, 
+                        day=None, hour=None):
         """
         Creating a custom time entry, minimum must is hour duration and project param
         :param hourduration:
         :param projectid: Not required if projectname given
-        :param projectname: Not required if projectid was given
-        :param clientname: Can speed up project query process
         :param year: Taken from now() if not provided
         :param month: Taken from now() if not provided
         :param day: Taken from now() if not provided
@@ -145,19 +143,14 @@ class Toggl():
             "time_entry": {}
         }
 
-        if not projectid:
-            if projectname and clientname:
-                projectid = (self.getClientProject(clientname, projectname))['data']['id']
-            elif projectname:
-                projectid = (self.searchClientProject(projectname))['data']['id']
-            else:
-                print 'Too many missing parameters for query'
-                exit(1)
+        if not projectid or not hourduration:
+            print 'Too many missing parameters for query'
+            exit(1)
 
         year = datetime.now().year if not year else year
         month = datetime.now().month if not month else month
         day = datetime.now().day if not day else day
-        hour = datetime.now().hour if not hour else hour
+        hour = 9 if not hour else hour
 
         timestruct = datetime(year, month, day, hour-2).isoformat() + '.000Z'
         data['time_entry']['start'] = timestruct
