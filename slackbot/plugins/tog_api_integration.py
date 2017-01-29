@@ -33,15 +33,13 @@ def currentRunningTime(message):
         hours = sinceTime.split(':')[0]
         minutes = sinceTime.split(':')[1]
         if int(hours) < 22: 
-            hours = sinceTime.split(':')[0] 
+            hours = str(int(hours) + 2)
         elif int(hours) == 22:
             hours = 0
         elif int(hours) == 23:
             hours = 1
-        else:
-            hours = 2
 
-        message.reply('Current time running since {}:{}'.format(hours, minutes))
+        message.reply('Time running since *{}:{}*'.format(hours, minutes))
 
 
 @respond_to('^start time (.*)')
