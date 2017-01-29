@@ -25,7 +25,12 @@ def toggl_user_object(message):
 
 @respond_to('^current time')
 def currentRunningTime(message):
-    currentTime = toggl_user_object(message).currentRunningTimeEntry()
+    toggl_obj = toggl_user_object(message)
+    if not toggl_obj:
+        message.reply('Cannot use toggl with your name. Probably no Token set')
+        return
+    currentTime = toggl_obj.currentRunningTimeEntry()
+    
     if not currentTime['data']:
         message.reply('No current running time')
     else:
@@ -44,7 +49,11 @@ def currentRunningTime(message):
 
 @respond_to('^start time (.*)')
 def startTime(message, project=None):
-    currentTime = toggl_user_object(message).currentRunningTimeEntry()
+    toggl_obj = toggl_user_object(message)
+    if not toggl_obj:
+        message.reply('Cannot use toggl with your name. Probably no Token set')
+        return
+    currentTime = toggl_obj.currentRunningTimeEntry()
     if not currentTime['data']:
         # Find pid by given project name
         pid = get_projectId_by_name(project)
@@ -59,7 +68,10 @@ def startTime(message, project=None):
 
 @respond_to('^stop time$')
 def startTime(message,):
-    currentTime = toggl_user_object(message).currentRunningTimeEntry()
+    if not toggl_obj:
+        message.reply('Cannot use toggl with your name. Probably no Token set')
+        return
+    currentTime = toggl_obj.currentRunningTimeEntry()
 
     if currentTime['data']:
         toggl_user_object(message).stopTimeEntry(currentTime['data']['id'])
@@ -70,6 +82,10 @@ def startTime(message,):
 
 @respond_to('set (.*) hours working on (.*)')
 def entry(message, hours, parameters):
+    if not toggl_obj:
+        message.reply('Cannot use toggl with your name. Probably no Token set')
+        return
+
     if len(parameters.split()) == 3:
         date = parameters.split()[2]
         startHour = None
@@ -94,7 +110,7 @@ def entry(message, hours, parameters):
     year = int(date.split('.')[2]) if date else None
 
     try:
-        response = toggl_user_object(message).createTimeEntry(hourduration=int(hours), projectid=pid, year=year,
+        response = toggl_obj.createTimeEntry(hourduration=int(hours), projectid=pid, year=year,
                                                                 month=month, day=day, hour=startHour)
         print response
         ret_date = response['data']['start'].split('.')[0].split('T')[0]
