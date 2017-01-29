@@ -9,7 +9,7 @@
 
 from slackbot.bot import respond_to
 from TogglPy import Toggl
-from utils import fetch_conf, get_projectId_by_name
+from utils import fetch_conf, get_projectId_by_name, get_projectName_by_id
 
 
 def toggl_user_object(message):
@@ -69,9 +69,21 @@ def startTime(message,):
 
 
 @respond_to('set (.*) hours working on (.*)')
-@respond_to('set (.*) hours working on (.*) on (.*)')
-@respond_to('set (.*) hours working on (.*) on (.*) from (.*)')
-def entry(message, hours, project, date=None, startHour=None):
+def entry(message, hours, parameters):
+    if len(parameters.split()) == 3:
+        date = parameters.split()[2]
+        startHour = None
+    elif len(parameters.split()) == 5:
+        date = parameters.split()[2]
+        startHour = int(parameters.split()[4])
+    else:
+        date = None
+        startHour = None
+
+    project = parameters if len(parameters.split()) == 1 else parameters.split()[0]
+    print 'parameters: ' + str(parameters) + ' len: ' + str(len(parameters.split()))
+    print 'date: ' + date
+
     pid = get_projectId_by_name(project)
     if not pid:
         message.reply('No such project *{}*'.format(project))
@@ -82,10 +94,19 @@ def entry(message, hours, project, date=None, startHour=None):
     year = int(date.split('.')[2]) if date else None
 
     try:
-        toggl_user_object(message).createTimeEntry(hourduration=int(hours), projectid=pid, year=year, month=month, day=day, hour=startHour)
+        response = toggl_user_object(message).createTimeEntry(hourduration=int(hours), projectid=pid, year=year,
+                                                                month=month, day=day, hour=startHour)
+        print response
+        ret_date = response['data']['start'].split('.')[0].split('T')[0]
+        ret_time = response['data']['start'].split('.')[0].split('T')[1]
+        ret_time_list = ret_time.split(':')
+        ret_time_list[0] = str(int(ret_time_list[0]) + 2)
+        ret_time = ':'.join(ret_time_list)
+        message.reply('*Entry was set, {} hours working on {}* (`{}`)'.format(str(int(response['data']['duration']/3600)), 
+                                                                            get_projectName_by_id(response['data']['pid']), 
+                                                                            '{}, {}'.format(ret_date, ret_time)))
     except Exception as e:
         print e
         message.reply('Bad parameters (hours: {}, project: {}, pid {})'.format(hours, project, pid))
     
-
 
