@@ -55,7 +55,9 @@ def help(message):
         '1. *get users report* will notify users with empty / part empty reports',
         '2. *my report* will get your own last 7 days report (excluding weekend)',
         '3. *activate* is used to make me report on Thursday at 17:00 (do it only once)',
-        '4. *start time <project>* can start the timer (if the given name matches a Toggl project)'
+        '4. *start time <project>* can start the timer (if the given name matches a Toggl project)',
+        '5. *current time* returns the start time',
+        '6. *stop time* stops current running time'
         '\n',
         'People I can currently help with differnt Toggl tasks are:',
         ', '.join([name for name in fetch_conf()['USERS_TOKENS'].keys()])

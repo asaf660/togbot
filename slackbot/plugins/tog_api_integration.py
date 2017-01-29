@@ -59,6 +59,17 @@ def startTime(message, project=None):
         message.reply('Time is already running')
 
 
+@respond_to('^stop time$')
+def startTime(message,):
+    currentTime = toggl_user_object(message).currentRunningTimeEntry()
+
+    if currentTime['data']:
+        toggl_user_object(message).stopTimeEntry(currentTime['data']['id'])
+        message.reply('Stopped.')
+    else:
+        message.reply('There is no time running')
+
+
 @respond_to('set (.*) hours working on (.*)')
 def entry(message, hours, project):
     print 'Hours: {}, Project: {}'.format(hours, project)
