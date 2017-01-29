@@ -24,7 +24,7 @@ def fetch_conf():
 
 
 def get_projectId_by_name(projectName):
-    projects = pickle.load(open( 'projectsMap.json', 'rb'))
+    projects = pickle.load(open( 'projectsMap.pickle', 'rb'))
     for key, value in projects.iteritems():
         if key.lower() in projectName.lower() or projectName.lower() in key.lower():
             return value
@@ -33,7 +33,7 @@ def get_projectId_by_name(projectName):
 
 
 def get_projectName_by_id(projectId):
-    projects = pickle.load(open( 'projectsMap.json', 'rb'))
+    projects = pickle.load(open( 'projectsMap.pickle', 'rb'))
     for key, value in projects.iteritems():
         if value == projectId:
             return key
