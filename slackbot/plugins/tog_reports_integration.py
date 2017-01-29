@@ -142,14 +142,6 @@ def message(message):
     message.reply(', '.join(get_projects_list()))
 
 
-
-# TODO: WIP ------>
-# @respond_to('$set (.*) hours .* working on (.*)')
-# def set_entry(message, hours, project):
-#     if 'today' in message.body:
-#         toggl.createTimeEntry()
-
-
 if __name__ == '__main__':
     
     main()
